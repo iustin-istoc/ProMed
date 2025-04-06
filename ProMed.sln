@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35825.156
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProMed.API", "ProMed.API\ProMed.API.csproj", "{EA063F68-AEA9-40C1-AD2C-46CA6EDAD101}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EA063F68-AEA9-40C1-AD2C-46CA6EDAD101}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA063F68-AEA9-40C1-AD2C-46CA6EDAD101}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA063F68-AEA9-40C1-AD2C-46CA6EDAD101}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA063F68-AEA9-40C1-AD2C-46CA6EDAD101}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D5B6C7BF-F9CE-42C7-AF44-852C09C8714E}
+	EndGlobalSection
+EndGlobal
