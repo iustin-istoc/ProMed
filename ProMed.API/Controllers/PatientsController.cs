@@ -48,9 +48,10 @@ namespace ProMed.API.Controllers
         public async Task<IActionResult> PutPatient(int id, Patient patient)
         {
             if (id != patient.PatientID)
-            {
                 return BadRequest();
-            }
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
             _context.Entry(patient).State = EntityState.Modified;
 
@@ -61,28 +62,29 @@ namespace ProMed.API.Controllers
             catch (DbUpdateConcurrencyException)
             {
                 if (!PatientExists(id))
-                {
                     return NotFound();
-                }
                 else
-                {
                     throw;
-                }
             }
 
             return NoContent();
         }
+
 
         // POST: api/Patients
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Patient>> PostPatient(Patient patient)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             _context.Patients.Add(patient);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetPatient", new { id = patient.PatientID }, patient);
         }
+
 
         // DELETE: api/Patients/5
         [HttpDelete("{id}")]

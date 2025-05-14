@@ -1,0 +1,18 @@
+<h1>Lista pacienților</h1>
+
+<input
+  type="text"
+  [(ngModel)]="numePacientNou"
+  placeholder="Nume pacient"
+/>
+<button (click)="adaugaPacient()">Adaugă</button>
+
+<ul *ngIf="pacienti.length > 0; else nimic">
+  <li *ngFor="let pacient of pacienti">
+    {{ pacient.name }} (ID: {{ pacient.patientID }})
+  </li>
+</ul>
+
+<ng-template #nimic>
+  <p>Nu există pacienți în baza de date.</p>
+</ng-template>
