@@ -16,12 +16,21 @@ export class PacientService {
 
   constructor(private http: HttpClient) {}
 
-  getPacienti(): Observable<Pacient[]> {
-    return this.http.get<Pacient[]>(this.apiUrl);
-  }
+ getPacienti() {
+  return this.http.get<any[]>(this.apiUrl);
+}
 
-  adaugaPacient(pacient: Partial<Pacient>): Observable<Pacient> {
-    return this.http.post<Pacient>(this.apiUrl, pacient);
-  }
+adaugaPacient(pacient: any) {
+  return this.http.post(this.apiUrl, pacient);
+}
+
+editeazaPacient(id: number, pacient: any) {
+  return this.http.put(`${this.apiUrl}/${id}`, pacient);
+}
+
+stergePacient(id: number) {
+  return this.http.delete(`${this.apiUrl}/${id}`);
+}
+
   
 }

@@ -12,8 +12,8 @@ using ProMed.API.Data;
 namespace ProMed.API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250406130355_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250514163052_AddDoctorHospitalRelations")]
+    partial class AddDoctorHospitalRelations
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -93,6 +93,21 @@ namespace ProMed.API.Migrations
                     b.ToTable("Doctors");
                 });
 
+            modelBuilder.Entity("ProMed.API.Models.DoctorHospital", b =>
+                {
+                    b.Property<int>("DoctorID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("HospitalID")
+                        .HasColumnType("int");
+
+                    b.HasKey("DoctorID", "HospitalID");
+
+                    b.HasIndex("HospitalID");
+
+                    b.ToTable("DoctorHospitals");
+                });
+
             modelBuilder.Entity("ProMed.API.Models.Hospital", b =>
                 {
                     b.Property<int>("HospitalID")
@@ -127,22 +142,21 @@ namespace ProMed.API.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PatientID"));
 
                     b.Property<string>("CNP")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(13)
+                        .HasColumnType("nvarchar(13)");
 
-                    b.Property<DateTime>("DateOfBirth")
+                    b.Property<DateTime?>("DateOfBirth")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FullName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Phone")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("PatientID");
@@ -180,13 +194,36 @@ namespace ProMed.API.Migrations
                     b.Navigation("Hospital");
                 });
 
+            modelBuilder.Entity("ProMed.API.Models.DoctorHospital", b =>
+                {
+                    b.HasOne("ProMed.API.Models.Doctor", "Doctor")
+                        .WithMany("DoctorHospitals")
+                        .HasForeignKey("DoctorID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ProMed.API.Models.Hospital", "Hospital")
+                        .WithMany("DoctorHospitals")
+                        .HasForeignKey("HospitalID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Doctor");
+
+                    b.Navigation("Hospital");
+                });
+
             modelBuilder.Entity("ProMed.API.Models.Doctor", b =>
                 {
                     b.Navigation("Appointments");
+
+                    b.Navigation("DoctorHospitals");
                 });
 
             modelBuilder.Entity("ProMed.API.Models.Hospital", b =>
                 {
+                    b.Navigation("DoctorHospitals");
+
                     b.Navigation("Doctors");
                 });
 

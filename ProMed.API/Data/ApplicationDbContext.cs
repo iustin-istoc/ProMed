@@ -15,12 +15,30 @@ namespace ProMed.API.Data
         public DbSet<Doctor> Doctors { get; set; }
         public DbSet<Patient> Patients { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
+        public DbSet<DoctorHospital> DoctorHospitals { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            //constraints 
+            modelBuilder.Entity<DoctorHospital>()
+                .HasKey(dh => new { dh.DoctorID, dh.HospitalID });
+
+            modelBuilder.Entity<DoctorHospital>()
+                .HasOne(dh => dh.Doctor)
+                .WithMany(d => d.DoctorHospitals)
+                .HasForeignKey(dh => dh.DoctorID)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<DoctorHospital>()
+                .HasOne(dh => dh.Hospital)
+                .WithMany(h => h.DoctorHospitals)
+                .HasForeignKey(dh => dh.HospitalID)
+                .OnDelete(DeleteBehavior.Restrict); 
+
+            //constraints
         }
+
     }
 }

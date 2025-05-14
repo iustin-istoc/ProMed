@@ -90,6 +90,21 @@ namespace ProMed.API.Migrations
                     b.ToTable("Doctors");
                 });
 
+            modelBuilder.Entity("ProMed.API.Models.DoctorHospital", b =>
+                {
+                    b.Property<int>("DoctorID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("HospitalID")
+                        .HasColumnType("int");
+
+                    b.HasKey("DoctorID", "HospitalID");
+
+                    b.HasIndex("HospitalID");
+
+                    b.ToTable("DoctorHospitals");
+                });
+
             modelBuilder.Entity("ProMed.API.Models.Hospital", b =>
                 {
                     b.Property<int>("HospitalID")
@@ -176,13 +191,36 @@ namespace ProMed.API.Migrations
                     b.Navigation("Hospital");
                 });
 
+            modelBuilder.Entity("ProMed.API.Models.DoctorHospital", b =>
+                {
+                    b.HasOne("ProMed.API.Models.Doctor", "Doctor")
+                        .WithMany("DoctorHospitals")
+                        .HasForeignKey("DoctorID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ProMed.API.Models.Hospital", "Hospital")
+                        .WithMany("DoctorHospitals")
+                        .HasForeignKey("HospitalID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Doctor");
+
+                    b.Navigation("Hospital");
+                });
+
             modelBuilder.Entity("ProMed.API.Models.Doctor", b =>
                 {
                     b.Navigation("Appointments");
+
+                    b.Navigation("DoctorHospitals");
                 });
 
             modelBuilder.Entity("ProMed.API.Models.Hospital", b =>
                 {
+                    b.Navigation("DoctorHospitals");
+
                     b.Navigation("Doctors");
                 });
 
