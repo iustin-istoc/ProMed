@@ -23,8 +23,18 @@ namespace ProMed.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Doctor>>> GetDoctors()
         {
-            return await _context.Doctors.ToListAsync();
+            try
+            {
+                return await _context.Doctors
+                    .Include(d => d.Hospital)
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Eroare server: " + ex.Message);
+            }
         }
+
 
         // GET: api/Doctors/5
         [HttpGet("{id}")]

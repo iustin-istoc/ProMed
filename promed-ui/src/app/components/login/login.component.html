@@ -1,0 +1,18 @@
+<div class="login-container">
+  <h2>Autentificare</h2>
+
+  <form (ngSubmit)="onLogin()">
+    <div>
+      <label>Email:</label>
+      <input [(ngModel)]="email" name="email" required />
+    </div>
+    <div>
+      <label>Parolă:</label>
+      <input [(ngModel)]="parola" name="parola" type="password" required />
+    </div>
+    <button type="submit">Login</button>
+  </form>
+
+  <p *ngIf="eroare" style="color: red;">{{ eroare }}</p>
+</div>
+<p>Nu ai cont? <a routerLink="/register">Înregistrează-te aici</a></p>

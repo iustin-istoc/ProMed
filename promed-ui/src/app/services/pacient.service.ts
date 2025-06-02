@@ -32,5 +32,13 @@ stergePacient(id: number) {
   return this.http.delete(`${this.apiUrl}/${id}`);
 }
 
+getSpitale(): Observable<any[]> {
+  return this.http.get<any[]>('https://localhost:7023/api/Hospitals');
+}
+
+getDoctori(): Observable<any[]> {
+  return this.http.get<any[]>('https://localhost:7023/api/Doctors');
+}
+
   
 }

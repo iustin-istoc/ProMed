@@ -1,0 +1,7 @@
+<full-calendar [options]="calendarOptions"></full-calendar>
+<div *ngIf="selectedEvent" style="margin-top: 20px; padding: 10px; border: 1px solid #999;">
+  <h4>Detalii programare</h4>
+  <p><strong>Titlu:</strong> {{ selectedEvent.title }}</p>
+  <p><strong>Data:</strong> {{ selectedEvent.date | date:'fullDate' }} {{ selectedEvent.date | date:'shortTime' }}</p>
+  <button (click)="selectedEvent = null">Închide</button>
+</div>

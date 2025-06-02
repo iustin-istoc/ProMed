@@ -161,6 +161,31 @@ namespace ProMed.API.Migrations
                     b.ToTable("Patients");
                 });
 
+            modelBuilder.Entity("ProMed.API.Models.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Parola")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Rol")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Utilizatori");
+                });
+
             modelBuilder.Entity("ProMed.API.Models.Appointment", b =>
                 {
                     b.HasOne("ProMed.API.Models.Doctor", "Doctor")

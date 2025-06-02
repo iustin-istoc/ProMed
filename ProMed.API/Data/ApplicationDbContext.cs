@@ -16,6 +16,8 @@ namespace ProMed.API.Data
         public DbSet<Patient> Patients { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<DoctorHospital> DoctorHospitals { get; set; }
+        public DbSet<User> Utilizatori { get; set; }
+
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

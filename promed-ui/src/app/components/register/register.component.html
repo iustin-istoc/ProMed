@@ -1,0 +1,15 @@
+<h2>Înregistrare pacient</h2>
+
+<form (ngSubmit)="onRegister()">
+  <input [(ngModel)]="email" name="email" placeholder="Email" required />
+  <input [(ngModel)]="parola" name="parola" type="password" placeholder="Parolă" required />
+
+  <input [(ngModel)]="fullName" name="fullName" placeholder="Nume complet" required />
+  <input [(ngModel)]="cnp" name="cnp" placeholder="CNP" required />
+  <input [(ngModel)]="phone" name="phone" placeholder="Telefon" required />
+  <input [(ngModel)]="dateOfBirth" name="dateofBirth" type="date" placeholder="Data nașterii" required />
+
+  <button type="submit">Înregistrează-te</button>
+</form>
+
+<p *ngIf="eroare" style="color:red">{{ eroare }}</p>

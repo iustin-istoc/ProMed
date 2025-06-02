@@ -15,4 +15,13 @@ export class AppointmentService {
   adaugaProgramare(programare: any): Observable<any> {
     return this.http.post(this.apiUrl, programare);
   }
+
+  getProgramariPentruPacient(): Observable<any[]> {
+  return this.http.get<any[]>('https://localhost:7023/api/Appointments/mine');
+  }
+
+  getProgramariPentruDoctor(): Observable<any[]> {
+  return this.http.get<any[]>('https://localhost:7023/api/Appointments/doctor');
+  }
+
 }
