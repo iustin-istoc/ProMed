@@ -1,0 +1,35 @@
+<h2>Bine ai venit în dashboard, {{ numePacient }}!</h2>
+
+<button (click)="logout()" style="margin-bottom: 20px;">Logout</button>
+
+<div *ngFor="let p of programari" style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;">
+  <p><strong>Doctor:</strong> {{ p.doctor?.fullName }}</p>
+  <p><strong>Data:</strong> {{ p.appointmentDate }}</p>
+  <p><strong>Motiv:</strong> {{ p.reason }}</p>
+</div>
+
+<p *ngIf="programari.length === 0">Nu ai nicio programare momentan.</p>
+
+<h3>Programează-te la medic</h3>
+
+<select [(ngModel)]="programareNoua.spitalID" (change)="onSpitalSauSpecializareChange()">
+  <option value="">Alege spital</option>
+  <option *ngFor="let s of spitale" [value]="s.hospitalID">{{ s.name }}</option>
+</select>
+
+<select [(ngModel)]="programareNoua.specializare" (change)="onSpitalSauSpecializareChange()">
+  <option value="">Alege specializare</option>
+  <option *ngFor="let spec of specializari" [value]="spec">{{ spec }}</option>
+</select>
+
+<select [(ngModel)]="programareNoua.doctorID">
+  <option value="">Alege doctor</option>
+  <option *ngFor="let d of doctoriFiltrati" [value]="d.doctorID">{{ d.fullName }}</option>
+</select>
+
+<input type="datetime-local" [(ngModel)]="programareNoua.appointmentDate" />
+<input type="text" [(ngModel)]="programareNoua.reason" placeholder="Motivul programării" />
+<button (click)="adaugaProgramare()">Programează</button>
+
+<h3>Calendarul programărilor</h3>
+<app-calendar-pacient [programari]="programari"></app-calendar-pacient>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace ProMed.API.Models
 {
@@ -6,14 +7,23 @@ namespace ProMed.API.Models
     {
         public int AppointmentID { get; set; }
 
+        [Required]
         public int PatientID { get; set; }
+
         public Patient? Patient { get; set; }
 
+        [Required]
         public int DoctorID { get; set; }
+
         public Doctor? Doctor { get; set; }
 
+        [Required]
         public DateTime AppointmentDate { get; set; }
-        public string Reason { get; set; }
-        public string Status { get; set; } // Ex: Programat, Finalizat, Anulat
+
+        [Required]
+        public string Reason { get; set; } = string.Empty;
+
+        [Required]
+        public string Status { get; set; } = "Programat"; // default status
     }
 }

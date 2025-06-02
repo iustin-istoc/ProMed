@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProMed.API.Data;
 using ProMed.API.Models;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace ProMed.API.Controllers
 {
@@ -104,5 +106,42 @@ namespace ProMed.API.Controllers
         {
             return _context.Appointments.Any(e => e.AppointmentID == id);
         }
+        // GET: api/Appointments/mine
+        [HttpGet("mine")]
+        [Authorize(Roles = "Pacient")]
+        public async Task<ActionResult<IEnumerable<Appointment>>> GetMyAppointments()
+        {
+            var email = User.FindFirst(ClaimTypes.Email)?.Value;
+
+            if (string.IsNullOrEmpty(email))
+                return Unauthorized("Token invalid sau email lipsă");
+
+            var programari = await _context.Appointments
+                .Include(a => a.Patient)
+                .Include(a => a.Doctor)
+                .Where(a => a.Patient.Email == email)
+                .ToListAsync();
+
+            return programari;
+        }
+        // GET: api/Appointments/doctor
+        [HttpGet("doctor")]
+        [Authorize(Roles = "Doctor")]
+        public async Task<ActionResult<IEnumerable<Appointment>>> GetAppointmentsForDoctor()
+        {
+            var email = User.FindFirst(ClaimTypes.Email)?.Value;
+
+            if (string.IsNullOrEmpty(email))
+                return Unauthorized("Token invalid sau email lipsă");
+
+            var programari = await _context.Appointments
+                .Include(a => a.Doctor)
+                .Include(a => a.Patient)
+                .Where(a => a.Doctor.Email == email)
+                .ToListAsync();
+
+            return programari;
+        }
+
     }
 }

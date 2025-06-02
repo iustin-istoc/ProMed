@@ -1,0 +1,11 @@
+<h2>Bine ai venit, doctorule!</h2>
+
+<button (click)="logout()">Logout</button>
+
+<div *ngFor="let p of programari" style="border: 1px solid #ccc; padding: 10px; margin: 10px 0;">
+  <p><strong>Pacient:</strong> {{ p.pacient?.fullName }}</p>
+  <p><strong>Data:</strong> {{ p.appointmentDate }}</p>
+  <p><strong>Motiv:</strong> {{ p.reason }}</p>
+</div>
+
+<p *ngIf="programari.length === 0">Nu ai programări momentan.</p>
