@@ -1,11 +1,29 @@
-<h2>Bine ai venit, doctorule!</h2>
+<app-navbar
+  *ngIf="numeDoctor !== null"
+  [numeUtilizator]="numeDoctor || 'Doctor'"
+  [onLogout]="logout.bind(this)">
+</app-navbar>
 
-<button (click)="logout()">Logout</button>
+<div class="dashboard-doctor">
 
-<div *ngFor="let p of programari" style="border: 1px solid #ccc; padding: 10px; margin: 10px 0;">
-  <p><strong>Pacient:</strong> {{ p.pacient?.fullName }}</p>
-  <p><strong>Data:</strong> {{ p.appointmentDate }}</p>
-  <p><strong>Motiv:</strong> {{ p.reason }}</p>
+  <div class="section">
+    <h3>Programările tale</h3>
+    <div *ngIf="programari.length > 0; else faraProgramari">
+      <div *ngFor="let p of programari" class="card">
+        <p><strong>Pacient:</strong> {{ p.patient?.fullName }}</p>
+        <p><strong>Dată:</strong> {{ p.appointmentDate | date:'short' }}</p>
+        <p><strong>Motiv:</strong> {{ p.reason }}</p>
+        <button (click)="stergeProgramare(p.appointmentID)">Șterge</button>
+      </div>
+    </div>
+    <ng-template #faraProgramari>
+      <p>Nu ai programări momentan.</p>
+    </ng-template>
+  </div>
+
+  <div class="section">
+    <h3>Calendarul programărilor</h3>
+    <app-calendar-pacient [programari]="programari"></app-calendar-pacient>
+  </div>
+
 </div>
-
-<p *ngIf="programari.length === 0">Nu ai programări momentan.</p>

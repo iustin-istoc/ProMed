@@ -10,6 +10,7 @@ using ProMed.API.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 
+
 namespace ProMed.API.Controllers
 {
     [Route("api/[controller]")]
@@ -78,13 +79,35 @@ namespace ProMed.API.Controllers
         // POST: api/Appointments
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Appointment>> PostAppointment(Appointment appointment)
+        public async Task<ActionResult<Appointment>> PostAppointment([FromBody] AppointmentDTO dto)
         {
-            _context.Appointments.Add(appointment);
-            await _context.SaveChangesAsync();
+            try
+            {
+                var appointment = new Appointment
+                {
+                    PatientID = _context.Patients.FirstOrDefault(p => p.Email == User.FindFirst(ClaimTypes.Email).Value)?.PatientID ?? 0,
 
-            return CreatedAtAction("GetAppointment", new { id = appointment.AppointmentID }, appointment);
+                    DoctorID = dto.DoctorID,
+                    AppointmentDate = dto.AppointmentDate,
+                    Reason = dto.Reason,
+                    Status = dto.Status
+                };
+
+                _context.Appointments.Add(appointment);
+                await _context.SaveChangesAsync();
+
+                return CreatedAtAction(nameof(GetAppointment), new { id = appointment.AppointmentID }, appointment);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("EROARE la adăugare programare: " + ex.Message);
+                return StatusCode(500, $"Eroare la salvare: {ex.Message}");
+            }
         }
+
+
+
+
 
         // DELETE: api/Appointments/5
         [HttpDelete("{id}")]

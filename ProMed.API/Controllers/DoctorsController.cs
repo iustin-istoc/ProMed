@@ -88,13 +88,24 @@ namespace ProMed.API.Controllers
         {
             var doctor = await _context.Doctors.FindAsync(id);
             if (doctor == null)
-                return NotFound();
+                return NotFound("Doctorul nu a fost găsit.");
+
+            // Ștergem asocierile dacă există
+            var asocieri = await _context.DoctorHospitals
+                .Where(dh => dh.DoctorID == id)
+                .ToListAsync();
+
+            if (asocieri.Any())
+                _context.DoctorHospitals.RemoveRange(asocieri);
 
             _context.Doctors.Remove(doctor);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok("Doctorul și asocierile au fost șterse.");
         }
+
+
+
 
         private bool DoctorExists(int id)
         {

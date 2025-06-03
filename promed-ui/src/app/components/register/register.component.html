@@ -1,15 +1,50 @@
-<h2>Înregistrare pacient</h2>
+<div class="register-wrapper">
+  <div class="register-card">
+    <img src="assets/promed-logo.png" alt="ProMed Logo" class="logo" />
+    <h2>Înregistrare Pacient</h2>
 
-<form (ngSubmit)="onRegister()">
-  <input [(ngModel)]="email" name="email" placeholder="Email" required />
-  <input [(ngModel)]="parola" name="parola" type="password" placeholder="Parolă" required />
+    <form (ngSubmit)="onRegister()">
+  <label>Nume complet:</label>
+    <input [(ngModel)]="fullName"
+       name="fullName"
+       required
+       (keydown)="handleFullNameKeydown($event)"
+       (paste)="handleFullNamePaste($event)" />
 
-  <input [(ngModel)]="fullName" name="fullName" placeholder="Nume complet" required />
-  <input [(ngModel)]="cnp" name="cnp" placeholder="CNP" required />
-  <input [(ngModel)]="phone" name="phone" placeholder="Telefon" required />
-  <input [(ngModel)]="dateOfBirth" name="dateofBirth" type="date" placeholder="Data nașterii" required />
 
-  <button type="submit">Înregistrează-te</button>
-</form>
 
-<p *ngIf="eroare" style="color:red">{{ eroare }}</p>
+
+  <label>Email:</label>
+  <input [(ngModel)]="email" name="email" type="email" required
+         (keydown.space)="$event.preventDefault()" 
+         (paste)="removeSpaces($event)" />
+
+  <label>Parolă:</label>
+  <input [(ngModel)]="parola" name="parola" type="password" required 
+         (keydown.space)="$event.preventDefault()" 
+         (paste)="removeSpaces($event)" />
+
+  <label>CNP:</label>
+  <input [(ngModel)]="cnp" name="cnp" required maxlength="13" minlength="13"
+         pattern="^[0-9]{13}$"
+         (keydown.space)="$event.preventDefault()" 
+         (paste)="removeSpaces($event)" />
+
+  <label>Telefon:</label>
+  <input [(ngModel)]="phone" name="phone" required maxlength="10" minlength="10"
+         pattern="^[0-9]{10}$"
+         (keydown.space)="$event.preventDefault()" 
+         (paste)="removeSpaces($event)" />
+
+  <label>Data nașterii:</label>
+  <input [(ngModel)]="dateOfBirth" name="dateOfBirth" type="date" required />
+
+      <button type="submit">Înregistrează-te</button>
+    </form>
+
+    <p *ngIf="mesajSucces" class="succes animated">{{ mesajSucces }}</p>
+    <p *ngIf="eroare" class="eroare">{{ eroare }}</p>
+
+    <p class="login-link">Ai deja cont? <a routerLink="/login">Autentifică-te aici</a></p>
+  </div>
+</div>

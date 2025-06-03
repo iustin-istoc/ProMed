@@ -37,7 +37,11 @@ namespace ProMed.API.Data
                 .HasOne(dh => dh.Hospital)
                 .WithMany(h => h.DoctorHospitals)
                 .HasForeignKey(dh => dh.HospitalID)
-                .OnDelete(DeleteBehavior.Restrict); 
+                .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Appointment>()
+                .Property(a => a.Status)
+                .HasColumnName("Status");
+    
 
             //constraints
         }

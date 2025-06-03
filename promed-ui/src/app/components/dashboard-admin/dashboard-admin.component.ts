@@ -7,13 +7,20 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 import { DoctorHospitalService } from '../../services/doctorhospital.service';
+import { lastValueFrom } from 'rxjs';
+import { NavbarComponent } from '../../navbar/navbar.component';
+
+
+
 @Component({
   selector: 'app-dashboard-admin',
   standalone: true,
   templateUrl: './dashboard-admin.component.html',
-  imports: [FormsModule, CommonModule]
+  imports: [FormsModule, CommonModule, NavbarComponent],
+  styleUrls: ['./dashboard-admin.component.css']
 })
 export class DashboardAdminComponent implements OnInit {
+
   //  PACIENȚI
   pacienti: any[] = [];
   numePacientNou: string = '';
@@ -46,12 +53,21 @@ export class DashboardAdminComponent implements OnInit {
   spitalSelectat: any = null;
   doctoriSpital: any[] = [];
 
-  programareNoua = {
-    pacientID: null,
-    doctorID: null,
-    appointmentDate: '',
-    reason: ''
-  };
+  programareNoua: {
+    pacientID: number | null;
+    doctorID: number | null;
+    appointmentDate: string;
+    reason: string;
+    status: string;
+  } = {
+      pacientID: null,
+      doctorID: null,
+      appointmentDate: '',
+      reason: '',
+      status: 'Programat'
+    };
+
+
 
 
 
@@ -62,7 +78,7 @@ export class DashboardAdminComponent implements OnInit {
     private appointmentService: AppointmentService,
     public authService: AuthService,
     private doctorHospitalService: DoctorHospitalService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.getPacienti();
@@ -70,8 +86,8 @@ export class DashboardAdminComponent implements OnInit {
     this.getSpitale();
     this.getProgramari();
     this.doctorHospitalService.getAsocieri().subscribe(data => {
-    this.asocieriDoctorSpitale = data;
-  });
+      this.asocieriDoctorSpitale = data;
+    });
 
   }
 
@@ -135,88 +151,119 @@ export class DashboardAdminComponent implements OnInit {
     this.telefonDoctorNou = '';
     this.spitalDoctorNou = null;
     this.spitaleSelectateDoctorNou = [];
-    
+
   }
 
   adaugaDoctor() {
-  if (
-    !this.numeDoctorNou.trim() ||
-    !this.emailDoctorNou ||
-    !this.parolaDoctorNoua ||
-    !this.specializareDoctorNoua ||
-    this.spitaleSelectateDoctorNou.length === 0
-  ) return;
+    if (
+      !this.numeDoctorNou.trim() ||
+      !this.emailDoctorNou ||
+      !this.parolaDoctorNoua ||
+      !this.specializareDoctorNoua ||
+      this.spitaleSelectateDoctorNou.length === 0
+    ) return;
 
-  const userNou = {
-    email: this.emailDoctorNou,
-    parola: this.parolaDoctorNoua,
-    rol: 'Doctor',
-    fullName: this.numeDoctorNou,
-    cnp: '0000000000000',
-    phone: this.telefonDoctorNou,
-    dateOfBirth: new Date()
-  };
+    const userNou = {
+      email: this.emailDoctorNou,
+      parola: this.parolaDoctorNoua,
+      rol: 'Doctor',
+      fullName: this.numeDoctorNou,
+      cnp: '0000000000000',
+      phone: this.telefonDoctorNou,
+      dateOfBirth: new Date()
+    };
 
-  this.authService.registerUser(userNou).subscribe({
-    next: () => {
-      const doctorNou = {
-        fullName: this.numeDoctorNou,
-        specialization: this.specializareDoctorNoua,
-        email: this.emailDoctorNou,
-        phone: this.telefonDoctorNou,
-        hospitalID: this.spitaleSelectateDoctorNou[0]  // doar pentru a popula câmpul principal
-      };
+    this.authService.registerUser(userNou).subscribe({
+      next: () => {
+        const doctorNou = {
+          fullName: this.numeDoctorNou,
+          specialization: this.specializareDoctorNoua,
+          email: this.emailDoctorNou,
+          phone: this.telefonDoctorNou,
+          hospitalID: this.spitaleSelectateDoctorNou[0]  // doar pentru a popula câmpul principal
+        };
 
-      this.doctorService.adaugaDoctor(doctorNou).subscribe((savedDoctor) => {
-        const requests = this.spitaleSelectateDoctorNou.map(hospitalId =>
-          this.doctorHospitalService.asociazaDoctorLaSpital(savedDoctor.doctorID, hospitalId)
-        );
+        this.doctorService.adaugaDoctor(doctorNou).subscribe((savedDoctor) => {
+          if (!savedDoctor?.doctorID) {
+            alert("Eroare: ID-ul doctorului nu a fost returnat.");
+            return;
+          }
 
-        // Așteptăm toate cererile POST să se finalizeze (opțional)
-        Promise.all(requests.map(req => req.toPromise())).then(() => {
-          alert('Doctor adăugat cu succes!');
-          this.resetCampuriDoctor();
-          this.getDoctori();
-          this.doctorHospitalService.getAsocieri().subscribe(data => {
-            this.asocieriDoctorSpitale = data;
+          const requests = this.spitaleSelectateDoctorNou.map(hospitalId =>
+            this.doctorHospitalService.asociazaDoctorLaSpital(savedDoctor.doctorID, hospitalId)
+          );
+
+          Promise.all(requests.map(req => lastValueFrom(req))).then(() => {
+            alert('Doctor adăugat cu succes!');
+            this.resetCampuriDoctor();
+            this.getDoctori();
+            this.doctorHospitalService.getAsocieri().subscribe(data => {
+              this.asocieriDoctorSpitale = data;
+            });
           });
         });
-      });
-    },
-    error: () => alert('Eroare la crearea contului doctorului.')
-  });
-}
+
+      },
+      error: () => alert('Eroare la crearea contului doctorului.')
+    });
+  }
 
   editeazaDoctor(doc: any) {
-  const spitaleAsociate = this.asocieriDoctorSpitale
-    .filter(dh => dh.doctorID === doc.doctorID)
-    .map(dh => dh.hospitalID);
+    const spitaleAsociate = this.asocieriDoctorSpitale
+      .filter(dh => dh.doctorID === doc.doctorID)
+      .map(dh => dh.hospitalID);
 
-  this.doctorEditat = {
-    ...doc,
-    spitaleSelectate: spitaleAsociate
-  };
-}
+    this.doctorEditat = {
+      ...doc,
+      spitaleSelectate: spitaleAsociate
+    };
+  }
 
 
   salveazaEditareDoctor() {
-  const id = this.doctorEditat.doctorID;
+    const id = this.doctorEditat.doctorID;
 
-  this.doctorService.editeazaDoctor(id, this.doctorEditat).subscribe(() => {
-    // (Opțional) trimite actualizări de spitale:
-    this.doctorHospitalService.stergeToateAsocierile(id).subscribe(() => {
-      this.doctorEditat.spitaleSelectate.forEach((hID: number) => {
-        this.doctorHospitalService.asociazaDoctorLaSpital(id, hID).subscribe();
+    const spitaleInitiale = this.asocieriDoctorSpitale
+      .filter(a => a.doctorID === id)
+      .map(a => a.hospitalID);
+
+    const spitaleNoi = this.doctorEditat.spitaleSelectate;
+
+    const deAdaugat = spitaleNoi.filter((idNou: number) => !spitaleInitiale.includes(idNou));
+    const deSters = spitaleInitiale.filter((idVechi: number) => !spitaleNoi.includes(idVechi));
+
+    this.doctorService.editeazaDoctor(id, this.doctorEditat).subscribe(() => {
+      const cereriAdaugare = deAdaugat.map((hID: number) =>
+        this.doctorHospitalService.asociazaDoctorLaSpital(id, hID)
+      );
+
+      const cereriStergere = deSters.map((hID: number) =>
+        this.doctorHospitalService.stergeAsociere(id, hID)
+      );
+
+      const toateCereri = [...cereriAdaugare, ...cereriStergere];
+
+      Promise.all(toateCereri.map((req: any) => lastValueFrom(req))).then(() => {
+        this.doctorEditat = null;
+        this.getDoctori();
+        this.doctorHospitalService.getAsocieri().subscribe(data => {
+          this.asocieriDoctorSpitale = data;
+        });
       });
     });
+  }
 
-    this.doctorEditat = null;
-    this.getDoctori();
-    this.doctorHospitalService.getAsocieri().subscribe(data => {
-      this.asocieriDoctorSpitale = data;
-    });
-  });
-}
+
+
+  toggleSpitalDoctor(hospitalID: number) {
+    const index = this.doctorEditat.spitaleSelectate.indexOf(hospitalID);
+    if (index === -1) {
+      this.doctorEditat.spitaleSelectate.push(hospitalID);
+    } else {
+      this.doctorEditat.spitaleSelectate.splice(index, 1);
+    }
+  }
+
 
 
   stergeDoctor(id: number) {
@@ -230,83 +277,97 @@ export class DashboardAdminComponent implements OnInit {
   }
   // SPITALE
   getSpitale() {
-  this.hospitalService.getSpitale().subscribe(data => {
-    this.spitale = data;
-  });
-}
+    this.hospitalService.getSpitale().subscribe(data => {
+      this.spitale = data;
+    });
+  }
 
-getSpitaleNume(doctorID: number): string[] {
-  return this.asocieriDoctorSpitale
-    .filter(a => a.doctorID === doctorID)
-    .map(a => this.spitale.find(s => s.hospitalID === a.hospitalID)?.name || '???');
-}
+  getSpitaleNume(doctorID: number): string[] {
+    return this.asocieriDoctorSpitale
+      .filter(a => a.doctorID === doctorID)
+      .map(a => this.spitale.find(s => s.hospitalID === a.hospitalID)?.name || '???');
+  }
 
 
 
-adaugaSpital() {
-  if (!this.numeSpitalNou.trim()) return;
+  adaugaSpital() {
+    if (!this.numeSpitalNou.trim()) return;
 
-  const spitalNou = {
-    name: this.numeSpitalNou,
-    city: this.orasSpitalNou,
-    address: this.adresaSpitalNoua
+    const spitalNou = {
+      name: this.numeSpitalNou,
+      city: this.orasSpitalNou,
+      address: this.adresaSpitalNoua
+    };
+
+    console.log('Trimitem spital:', spitalNou); // <== Asta ne arată datele reale
+
+    this.hospitalService.adaugaSpital(spitalNou).subscribe(() => {
+      this.numeSpitalNou = '';
+      this.orasSpitalNou = '';
+      this.adresaSpitalNoua = '';
+      this.getSpitale();
+    });
+  }
+
+
+  editeazaSpital(spital: any) {
+    this.spitalEditat = { ...spital };
+  }
+
+  salveazaEditareSpital() {
+    this.hospitalService.editeazaSpital(this.spitalEditat.hospitalID, this.spitalEditat).subscribe(() => {
+      this.spitalEditat = null;
+      this.getSpitale();
+    });
+  }
+
+  stergeSpital(id: number) {
+    this.hospitalService.stergeSpital(id).subscribe(() => {
+      this.getSpitale();
+    });
+  }
+
+  anuleazaEditareSpital() {
+    this.spitalEditat = null;
+  }
+  // PROGRAMARI
+
+  getProgramari() {
+    this.appointmentService.getProgramari().subscribe(data => {
+      this.programari = data;
+    });
+  }
+
+  onSpitalChange() {
+    this.doctoriSpital = this.doctori.filter(d => d.hospitalID === Number(this.spitalSelectat));
+  }
+
+  adaugaProgramare() {
+  const programareTrimisa = {
+    pacientID: this.programareNoua.pacientID!,
+    doctorID: this.programareNoua.doctorID!,
+    appointmentDate: new Date(this.programareNoua.appointmentDate).toISOString(),  // asigură format ISO
+    reason: this.programareNoua.reason.trim(),
+    status: "Programat"
   };
 
-  console.log('Trimitem spital:', spitalNou); // <== Asta ne arată datele reale
+  console.log("Programare trimisă:", programareTrimisa);
 
-  this.hospitalService.adaugaSpital(spitalNou).subscribe(() => {
-    this.numeSpitalNou = '';
-    this.orasSpitalNou = '';
-    this.adresaSpitalNoua = '';
-    this.getSpitale();
-  });
-}
-
-
-editeazaSpital(spital: any) {
-  this.spitalEditat = { ...spital };
-}
-
-salveazaEditareSpital() {
-  this.hospitalService.editeazaSpital(this.spitalEditat.hospitalID, this.spitalEditat).subscribe(() => {
-    this.spitalEditat = null;
-    this.getSpitale();
-  });
-}
-
-stergeSpital(id: number) {
-  this.hospitalService.stergeSpital(id).subscribe(() => {
-    this.getSpitale();
-  });
-}
-
-anuleazaEditareSpital() {
-  this.spitalEditat = null;
-}
-// PROGRAMARI
-
-getProgramari() {
-  this.appointmentService.getProgramari().subscribe(data => {
-    this.programari = data;
-  });
-}
-
-onSpitalChange() {
-  this.doctoriSpital = this.doctori.filter(d => d.hospitalID === Number(this.spitalSelectat));
-}
-
-adaugaProgramare() {
-  if (!this.programareNoua.pacientID || !this.programareNoua.doctorID) return;
-
-  this.appointmentService.adaugaProgramare(this.programareNoua).subscribe(() => {
-    alert('Programare salvată cu succes!');
-    this.programareNoua = {
-      pacientID: null,
-      doctorID: null,
-      appointmentDate: '',
-      reason: ''
-    };
-    this.getProgramari();
+  this.appointmentService.adaugaProgramare(programareTrimisa).subscribe({
+    next: () => {
+      alert("Programare adăugată cu succes!");
+      this.programareNoua = {
+        pacientID: null,
+        doctorID: null,
+        appointmentDate: '',
+        reason: '',
+        status: 'Programat'
+      };
+      this.getProgramari();
+    },
+    error: err => {
+      console.error("Eroare la salvarea programării:", err);
+    }
   });
 }
 
@@ -314,6 +375,7 @@ logout() {
     this.authService.logout();
   }
 
-  
+
+
 
 }

@@ -5,7 +5,7 @@ using ProMed.API.Models;
 
 namespace ProMed.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/DoctorHospitals")]
     [ApiController]
     public class DoctorHospitalsController : ControllerBase
     {
@@ -53,12 +53,56 @@ namespace ProMed.API.Controllers
                 .ToListAsync();
 
             if (!asocieri.Any())
-                return NotFound("Nu există asocieri pentru acest doctor.");
+            {
+                // Nu mai întoarce NotFound - răspunde cu 200 chiar dacă nu sunt asocieri
+                return Ok("Nicio asociere de șters.");
+            }
 
             _context.DoctorHospitals.RemoveRange(asocieri);
             await _context.SaveChangesAsync();
 
             return Ok("Asocierile au fost șterse.");
+        }
+
+
+
+
+
+        [HttpPost("assign-doctor/{doctorID}/to-hospital/{hospitalID}")]
+        public async Task<IActionResult> AssignDoctorToHospital(int doctorID, int hospitalID)
+        {
+            var exista = await _context.DoctorHospitals
+                .AnyAsync(dh => dh.DoctorID == doctorID && dh.HospitalID == hospitalID);
+
+            if (exista)
+                return Ok("Asocierea deja exista (ignorat).");
+
+
+            var asociereNoua = new DoctorHospital
+            {
+                DoctorID = doctorID,
+                HospitalID = hospitalID
+            };
+
+            _context.DoctorHospitals.Add(asociereNoua);
+            await _context.SaveChangesAsync();
+
+            return Ok("Asociere creată.");
+        }
+
+        [HttpDelete("doctor/{doctorID}/hospital/{hospitalID}")]
+        public async Task<IActionResult> DeleteDoctorHospital(int doctorID, int hospitalID)
+        {
+            var relatie = await _context.DoctorHospitals
+                .FirstOrDefaultAsync(dh => dh.DoctorID == doctorID && dh.HospitalID == hospitalID);
+
+            if (relatie == null)
+                return NotFound("Asocierea nu a fost găsită.");
+
+            _context.DoctorHospitals.Remove(relatie);
+            await _context.SaveChangesAsync();
+
+            return Ok("Asocierea a fost ștearsă.");
         }
 
     }

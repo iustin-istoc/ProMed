@@ -1,0 +1,49 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #5ca3d6;
+  padding: 10px 30px;
+  border-radius: 6px;
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo {
+  width: 40px;
+}
+
+.brand {
+  font-weight: bold;
+  font-size: 1.5rem;
+  color: white;
+}
+
+.user-section {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.email {
+  color: white;
+  font-weight: 500;
+}
+
+button {
+  padding: 8px 16px;
+  background: white;
+  color: #3498db;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #f0f0f0;
+}

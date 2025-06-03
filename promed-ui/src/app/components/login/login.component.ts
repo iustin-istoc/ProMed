@@ -9,7 +9,8 @@ import { RouterModule } from '@angular/router';
   selector: 'app-login',
   standalone: true,
   imports: [FormsModule, CommonModule, RouterModule],
-  templateUrl: './login.component.html'
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
   email: string = '';
@@ -43,5 +44,19 @@ export class LoginComponent {
     }
   });
 }
+
+removeSpaces(event: ClipboardEvent) {
+  event.preventDefault();
+  const text = event.clipboardData?.getData('text')?.replace(/\s/g, '');
+  const target = event.target as HTMLInputElement;
+  const start = target.selectionStart || 0;
+  const end = target.selectionEnd || 0;
+  const currentValue = target.value;
+  target.value = currentValue.slice(0, start) + text + currentValue.slice(end);
+  const modelName = target.getAttribute('ng-reflect-model');
+  if (modelName === this.email) this.email = target.value;
+  if (modelName === this.parola) this.parola = target.value;
+}
+
 
 }

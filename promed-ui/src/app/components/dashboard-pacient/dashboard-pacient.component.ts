@@ -5,11 +5,14 @@ import { PacientService } from '../../services/pacient.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CalendarPacientComponent } from '../calendar-pacient/calendar-pacient.component';
+import { NavbarComponent } from '../../navbar/navbar.component';
+
 @Component({
   selector: 'app-dashboard-pacient',
   standalone: true,
   templateUrl: './dashboard-pacient.component.html',
-  imports: [CommonModule,FormsModule,CalendarPacientComponent]
+  imports: [CommonModule,FormsModule,CalendarPacientComponent,NavbarComponent],
+  styleUrls: ['./dashboard-pacient.component.css']
 })
 export class DashboardPacientComponent implements OnInit {
   programari: any[] = [];
@@ -40,7 +43,10 @@ programareNoua = {
     this.getNumePacient();
     this.getSpitale();
     this.getDoctori();
+    
   }
+
+  
 
   getProgramariPacient() {
   this.appointmentService.getProgramariPentruPacient().subscribe(data => {
@@ -50,11 +56,13 @@ programareNoua = {
 
 
   getNumePacient() {
-    this.pacientService.getPacienti().subscribe(data => {
-      const pacient = data.find((p: any) => p.email === this.emailPacient);
-      this.numePacient = pacient ? pacient.fullName : 'Pacient';
-    });
-  }
+  this.pacientService.getPacienti().subscribe(data => {
+    const pacient = data.find((p: any) => p.email === this.emailPacient);
+    this.numePacient = pacient ? pacient.fullName : 'Utilizator';
+    console.log('Nume pacient din API:', this.numePacient);
+  });
+}
+
 
   logout() {
     this.auth.logout();
@@ -73,10 +81,13 @@ getDoctori() {
 
 onSpitalSauSpecializareChange() {
   const { spitalID, specializare } = this.programareNoua;
-  this.doctoriFiltrati = this.doctori.filter((d: any) =>
-    d.hospitalID === Number(spitalID) && d.specialization === specializare
+  const doctoriSpital = this.doctori.filter((d: any) => d.hospitalID === Number(spitalID));
+  this.specializari = [...new Set(doctoriSpital.map((d: any) => d.specialization))];
+  this.doctoriFiltrati = doctoriSpital.filter((d: any) =>
+    !specializare || d.specialization === specializare
   );
 }
+
 
 adaugaProgramare() {
   const programare = {
@@ -91,4 +102,8 @@ adaugaProgramare() {
     this.getProgramariPacient();
   });
 }
+
+
+
+
 }
