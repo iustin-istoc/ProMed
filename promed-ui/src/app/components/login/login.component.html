@@ -1,18 +1,31 @@
-<div class="login-container">
-  <h2>Autentificare</h2>
+<div class="login-wrapper">
+  <div class="login-card">
+    <img src="assets/promed-logo.png" alt="ProMed Logo" class="logo" />
+    <h2>Autentificare</h2>
 
-  <form (ngSubmit)="onLogin()">
-    <div>
+    <form (ngSubmit)="onLogin()">
       <label>Email:</label>
-      <input [(ngModel)]="email" name="email" required />
-    </div>
-    <div>
-      <label>Parolă:</label>
-      <input [(ngModel)]="parola" name="parola" type="password" required />
-    </div>
-    <button type="submit">Login</button>
-  </form>
+      <input type="email"
+             [(ngModel)]="email"
+             name="email"                          
+             (keydown.space)="$event.preventDefault()"
+             (paste)="removeSpaces($event)"
+             placeholder="Email"
+             required />
 
-  <p *ngIf="eroare" style="color: red;">{{ eroare }}</p>
+      <label>Parolă:</label>
+      <input type="password"
+             [(ngModel)]="parola"
+             name="parola"                       
+             (keydown.space)="$event.preventDefault()"
+             (paste)="removeSpaces($event)"
+             placeholder="Parolă"
+             required />
+
+      <button type="submit">Login</button>
+    </form>
+
+    <p *ngIf="eroare" class="eroare">{{ eroare }}</p>
+    <p class="signup-link">Nu ai cont? <a routerLink="/register">Înregistrează-te aici</a></p>
+  </div>
 </div>
-<p>Nu ai cont? <a routerLink="/register">Înregistrează-te aici</a></p>

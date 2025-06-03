@@ -1,0 +1,94 @@
+:host {
+  display: block;
+  padding: 20px;
+  font-family: 'Segoe UI', sans-serif;
+  color: #333;
+  background: transparent;
+}
+
+/* Headere */
+h1, h2 {
+  margin-top: 30px;
+  color: #1a2b44;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 8px;
+}
+
+/* Card vizual pentru fiecare secțiune */
+.section-card {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 25px;
+  margin-bottom: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.section-card h2 {
+  margin-top: 0;
+  color: #2c3e50;
+  font-size: 1.4rem;
+}
+
+/* Stil input/select */
+input, select {
+  padding: 10px;
+  margin: 5px 0 10px 0;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 0.95rem;
+  width: 100%;
+}
+
+input:focus, select:focus {
+  border-color: #007acc;
+  outline: none;
+}
+
+/* Buton */
+button {
+  padding: 10px 20px;
+  margin-top: 5px;
+  background-color: #007acc;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+button:hover {
+  background-color: #005f99;
+}
+
+/* Liste pacienți/doctors */
+ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+li {
+  margin-bottom: 10px;
+  background: rgba(0, 0, 0, 0.03);
+  padding: 10px 15px;
+  border-radius: 6px;
+}
+
+/* Formular doctor organizat în grid */
+.doctor-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.checkbox-list label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+label {
+  font-weight: 500;
+  margin-top: 8px;
+  display: inline-block;
+  color: #333;
+}

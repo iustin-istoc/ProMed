@@ -1,0 +1,23 @@
+.dashboard-doctor {
+  padding: 20px;
+}
+
+.section {
+  margin-bottom: 30px;
+}
+
+.card {
+  background-color: #f2f2f2;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.card button {
+  background-color: #d9534f;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}

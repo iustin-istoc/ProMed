@@ -1,0 +1,135 @@
+/* Fundal dinamic cu gradient animat */
+body, html {
+  margin: 0;
+  height: 100%;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(120deg, #d9f1ff, #f5fbff);
+  background-size: 400% 400%;
+  animation: gradientBG 15s ease infinite;
+}
+
+/* Animația pentru fundal */
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.login-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.login-card {
+  background: white;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  animation: fadeIn 1s ease-out;
+}
+
+@keyframes fadeIn {
+  from { transform: translateY(30px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+.logo {
+  max-width: 180px;
+  margin-bottom: 20px;
+}
+
+h2 {
+  margin-bottom: 25px;
+  color: #333;
+  font-weight: 600;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+input {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #c0d6e8;
+  background-color: #f3faff;
+  font-size: 14px;
+}
+
+input:focus {
+  outline: none;
+  border-color: #69b7f0;
+  box-shadow: 0 0 5px rgba(105, 183, 240, 0.5);
+}
+
+button {
+  background: #0099cc;
+  color: white;
+  border: none;
+  padding: 12px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+button:hover {
+  background: #007bb5;
+}
+
+.signup-link {
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.signup-link a {
+  color: #0099cc;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.signup-link a:hover {
+  text-decoration: underline;
+}
+
+.eroare {
+  color: red;
+  font-size: 14px;
+  margin-top: -10px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 4px;
+  color: #333;
+}
+.signup-link {
+  margin-top: 20px;
+  font-size: 0.95rem;
+  text-align: center;
+  color: #333;
+}
+
+.signup-link a {
+  color: #0099cc;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.signup-link a:hover {
+  text-decoration: underline;
+}

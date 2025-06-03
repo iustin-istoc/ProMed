@@ -24,4 +24,9 @@ export class AppointmentService {
   return this.http.get<any[]>('https://localhost:7023/api/Appointments/doctor');
   }
 
+  stergeProgramare(id: number): Observable<any> {
+  return this.http.delete(`${this.apiUrl}/${id}`);
+}
+
+
 }
